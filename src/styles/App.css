@@ -1,21 +1,49 @@
 /* Base Application Styles */
-body {
-  color: #fff;
-  background: #222;
-}
-
-.index img {
-  margin: 40px auto;
-  border-radius: 4px;
-  background: #fff;
-  display: block;
-}
-
-.index .notice {
+.import-box {
+  width: 50%;
   margin: 20px auto;
-  padding: 15px 0;
   text-align: center;
-  border: 1px solid #000;
-  border-width: 1px 0;
-  background: #666;
+  color: #666;
+}
+.import-box input {
+  background: #fff;
+  border: 1px solid #ccc;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
+  height: 30px;
+  line-height: 30px;
+  margin: 50px 0;
+}
+
+.type-btn-group {
+  width: 1400px;
+  margin: 20px auto;
+}
+.type-btn-group .type-btn {
+  display: inline-block;
+  width: 100px;
+  border: 1px solid #aaa;
+  border-radius: 4px;
+  margin: 10px;
+  height: 20px;
+  text-align: center;
+  cursor: pointer;
+  color: #aaa;
+}
+
+.type-btn-group .active {
+  border: 1px solid #666;
+  color: #666;
+}
+
+.line-chart-container {
+  width: 80vw;
+  margin: 20px 10vw;
+  height: 50vw;
+}
+.pie-container {
+  width: 80vw;
+  margin: 20px 10vw;
+  height: 50vw;
 }
