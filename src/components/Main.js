@@ -82,7 +82,8 @@ const dataMap = {
   '奖金': 'incomeRecords',
   '报销': 'incomeRecords',
   '投资收入': 'incomeRecords',
-  '余额变更': 'otherRecords'
+  '余额变更': 'otherRecords',
+  '红包': 'otherRecords'
 };
 //英文类型对应的中文名
 export const typeMap = {
@@ -156,8 +157,6 @@ class AppComponent extends React.Component {
 
             //年月日进行盈利累加
             this.caculate(t.k, 'surplusRecords', t.v, r['金额'], false);
-            //年月日的盈利 = 总量计算，图表页再根据类型进行分类
-            allData['totalRecords'] = allData['surplusRecords'];
           }
         })
       } else {
@@ -167,6 +166,9 @@ class AppComponent extends React.Component {
         }
       }
     });
+    //计算totalRecords
+    this.caculateTotalRecords();
+
     this.setState({
       allData,
       emptyKeys,
@@ -175,6 +177,21 @@ class AppComponent extends React.Component {
     this.selectType(this.state.showType, 'years')
   }
 
+  //计算totalRecords数据
+  caculateTotalRecords() {
+    ['days', 'months', 'years'].map(timeType => {
+      let surplusRecords = allData['surplusRecords'][timeType];
+      allData['totalRecords'][timeType].first = surplusRecords.first;
+      allData['totalRecords'][timeType].last = surplusRecords.last;
+
+      for (let i = surplusRecords.first; i <= surplusRecords.last; i++) {
+        let before = allData['totalRecords'][timeType].data[i-1] ? allData['totalRecords'][timeType].data[i-1] : 0;
+        allData['totalRecords'][timeType].data[i] = Number((before + (surplusRecords.data[i] ? surplusRecords.data[i] : 0)).toFixed(2));
+      }
+    })
+  }
+
+  //计算pie的数据
   caculatePieData() {
     let drawPieData = {
       years: {},
@@ -279,13 +296,23 @@ class AppComponent extends React.Component {
   }
 
   render() {
+    let keys = [];
+    for (let key in dataMap) {
+      keys.push(`${key}=>${typeMap[dataMap[key]]}`);
+    }
     return (
       <div className='index'>
+        { this.state.emptyKeys &&
+          <div className='empty-keys'>
+            未纳入计算的分类：{this.state.emptyKeys.join('、')}。
+          </div>
+        }
         { !this.state.drawChartData &&
           <ReadFile getData={this.handleData.bind(this)}/>
         }
         { this.state.drawChartData &&
         <div>
+          <div className='keys-map'>支出分类说明：{keys.join('、')}</div>
           <div className='line-container'>
             <div className='type-btn-group'>
               {this.state.allType.map(t => (

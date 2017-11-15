@@ -62,16 +62,8 @@ class Line extends Component {
         //筛选出datasets中所对应的那条线
         let filterData = data.datasets.filter(d => d.label === typeMap[type])[0];
         //填充数据，总额（totalRecords）需要累加
-        if (filterData && type !== 'totalRecords') {
+        if (filterData && type) {
           filterData.data.push(value);
-        } else if (filterData && type === 'totalRecords') {
-          let l = filterData.data.length;
-          if (l) {
-            //累加
-            filterData.data.push(Number((Number(filterData.data[l - 1]) + value).toFixed(2)));
-          } else {
-            filterData.data.push(value);
-          }
         }
       }
     }

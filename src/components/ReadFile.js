@@ -3,7 +3,11 @@ import XLSX from 'xlsx'
 
 export default class ReadFile extends React.Component {
   constructor(props) {
-    super(props)
+    super(props);
+
+    this.state = {
+      showError: false
+    }
   }
 
   readFile(e) {
@@ -30,7 +34,9 @@ export default class ReadFile extends React.Component {
       } catch (error) {
         console.log(error);
         console.log('出错了emmmmmm, 一定是你的错，不怪我');
-        return;
+        _this.setState({
+          showError: true
+        });
       }
     }
 
@@ -45,6 +51,7 @@ export default class ReadFile extends React.Component {
         <div className='txt'>
           上传excel文件，文件内容这里以口袋记账导出数据为基准
         </div>
+        {this.state.showError && <div className='error-txt'>出错了emmmmmm, 一定是你的错，不怪我</div>}
       </div>
     )
   }
