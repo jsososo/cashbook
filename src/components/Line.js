@@ -18,10 +18,12 @@ class Line extends Component {
   }
 
   componentWillReceiveProps(newProps) {
+    let selectedOptions = this.state.selectedOptions;
     if (newProps.data) {
       this.setState({
         rawData: newProps.data,
-        data: this.getData(newProps.data, this.state.options.value[this.state.selectedOptions])
+        data: this.getData(newProps.data, this.state.options.value[this.state.selectedOptions]),
+        selectedOptions: newProps.data.type === (this.state.rawData ? this.state.rawData.type : '') ? selectedOptions : 0
       });
     }
   }
@@ -40,6 +42,10 @@ class Line extends Component {
         label: typeMap[t],
         backgroundColor: `rgba(${COLOR_MAP[t]},0.1)`,
         borderColor: `rgba(${COLOR_MAP[t]},1)`,
+        lineTension: 0.3,
+        pointBackgroundColor: '#fff',
+        pointBorderWidth: 1,
+        pointHoverRadius: 5,
         data: []
       })
     }
@@ -85,19 +91,26 @@ class Line extends Component {
         while(f < l) {
           let year = parseInt(f / 12 + 1970);
           options.key.push(year);
-          options.value.push([(year - 1970) * 12, (year - 1969) * 12]);
+          options.value.push([(year - 1970) * 12, (year - 1969) * 12 - 1]);
           f += 12;
         }
         break;
       case 'days':
         options.key.push('全部');
         options.value.push('all');
+        //设置出起始日的月初和截止日的月初
         let [dateF, dateL] = [new Date(f * 1000 * 3600 * 24), new Date(l * 1000 * 3600 * 24)];
+        let [_fm, _fy, _lm, _ly] = [dateF.getMonth(), dateF.getFullYear(), dateL.getMonth(), dateL.getFullYear()];
+        dateF.setTime(0);
+        dateF.setMonth(_fm + (_fy - 1970) * 12);
+        dateL.setTime(0);
+        dateL.setMonth(_lm + (_ly - 1970) * 12);
         while(dateF.getFullYear() < dateL.getFullYear() || (dateF.getFullYear() === dateL.getFullYear() && dateF.getMonth() < dateL.getMonth())) {
+          //月初、月末
           options.key.push(dateF.getFullYear() + '.' + (dateF.getMonth() + 1));
-          let _f = dateF.getTime() / (1000 * 3600 * 24);
+          let _f = dateF.getTime() / (3600 * 1000 * 24);
           dateF.setMonth(dateF.getMonth() + 1);
-          let _l = dateF.getTime() / (1000 * 3600 * 24);
+          let _l = dateF.getTime() / (3600 * 1000 * 24) - 1;
           options.value.push([_f, _l]);
         }
         break;
@@ -140,14 +153,14 @@ class Line extends Component {
     return (
       <div className='line-chart-container'>
         { this.state.options.key.length > 1 &&
-          <select onChange={(e) => this.handleSelected(e.target.value)}>
+          <select value={this.state.selectedOptions} onChange={(e) => this.handleSelected(e.target.value)}>
             {this.state.options.key.map((k, index) => (
                 <option key={index} value={index}>{k}</option>
               )
             )}
           </select>
         }
-        <RC2 data={this.state.data} type='line' />
+        {this.state.data && this.state.data.labels.length > 0 && <RC2 data={this.state.data} type='line' />}
       </div>
     );
   }

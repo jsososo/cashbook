@@ -9,7 +9,7 @@ let baseConfig = require('./base');
 let BowerWebpackPlugin = require('bower-webpack-plugin');
 
 module.exports = {
-  devtool: 'eval',
+  devtool: false,
   module: {
     preLoaders: [
       {
